@@ -96,78 +96,79 @@ const SignInForm = () => {
   );
 };
 
-const SignUpForm = () => (
-  <form className="login-sign-up-form">
-    <h2 className="login-title">Sign up</h2>
-    <div className="login-card-image">
-      <i className="fas fa-user-circle login-card-icon" style={{ textAlign: 'center', fontSize: "125px", color: "white" }} />
-    </div>
-    <div className="login-input-field" style={{ height: '35px', display: 'flex', alignItems: 'center' }}>
-  <i className="fas fa-user" style={{ fontSize: '18px', marginRight: '8px' }} />
-  <input 
-    type="text" 
-    placeholder="Username" 
-    style={{ height: '100%', fontSize: '14px', padding: '0 8px', width: '100%' }} 
-  />
-</div>
-<div className="login-input-field" style={{ height: '35px', display: 'flex', alignItems: 'center' }}>
-  <i className="fas fa-envelope" style={{ fontSize: '18px', marginRight: '8px' }} />
-  <input 
-    type="email" 
-    placeholder="Email" 
-    style={{ height: '100%', fontSize: '14px', padding: '0 8px', width: '100%' }} 
-  />
-</div>
-<div className="login-input-field" style={{ height: '35px', display: 'flex', alignItems: 'center' }}>
-  <i className="fas fa-lock" style={{ fontSize: '18px', marginRight: '8px' }} />
-  <input 
-    type="password" 
-    placeholder="Password" 
-    style={{ height: '100%', fontSize: '14px', padding: '0 8px', width: '100%' }} 
-  />
-</div>
-<div className="login-input-field" style={{ height: '35px', display: 'flex', alignItems: 'center' }}>
-  <i className="fas fa-wallet" style={{ fontSize: '18px', marginRight: '8px' }} />
-  <input 
-    type="text" 
-    placeholder="Budget" 
-    style={{ height: '100%', fontSize: '14px', padding: '0 8px', width: '100%' }} 
-  />
-</div>
-<div className="login-input-field" style={{ height: '35px', display: 'flex', alignItems: 'center' }}>
-  <i className="fas fa-chart-line" style={{ fontSize: '18px', marginRight: '8px' }} />
-  <select 
-    style={{ height: '100%', fontSize: '14px', padding: '0 8px', width: '100%', border: 'none', color: '#ababab', background: 'transparent', outline: 'none', cursor: 'pointer' }}
-    defaultValue=""
-  >
-    <option value="" disabled hidden>Select any one</option>
-    <option value="low">Low</option>
-    <option value="medium">Medium</option>
-    <option value="high">High</option>
-  </select>
-</div>
+const SignUpForm = () => {
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    country: '',
+    budget: '',
+    risk: '',
+    holdtime: ''
+  });
 
+  const [error, setError] = useState(null);
 
-<div className="login-input-field" style={{ height: '35px', display: 'flex', alignItems: 'center' }}>
-  <i className="fas fa-globe" style={{ fontSize: '18px', marginRight: '8px' }} />
-  <input 
-    type="text" 
-    placeholder="Country" 
-    style={{ height: '100%', fontSize: '14px', padding: '0 8px', width: '100%' }} 
-  />
-</div>
-<div className="login-input-field" style={{ height: '35px', display: 'flex', alignItems: 'center' }}>
-  <i className="fas fa-hourglass" style={{ fontSize: '18px', marginRight: '8px' }} />
-  <input 
-    type="text" 
-    placeholder="Holdtime" 
-    style={{ height: '100%', fontSize: '14px', padding: '0 8px', width: '100%' }} 
-  />
-</div>
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-    <input type="submit" className="login-btn" value="Sign up" />
-  </form>
-);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://localhost:8000/api/login', {
+        input: "signup",
+        ...formData
+      });
+
+      console.log("Signup Successful", response.data);
+      // Handle success (e.g., navigate to login, show success message)
+    } catch (error) {
+      setError(error.response?.data?.error || "An error occurred");
+    }
+  };
+
+  return (
+    <form className="login-sign-up-form" onSubmit={handleSubmit}>
+      <h2 className="login-title">Sign up</h2>
+      <div className="login-input-field">
+        <i className="fas fa-user" />
+        <input type="text" name="username" placeholder="Username" value={formData.username} onChange={handleChange} required />
+      </div>
+      <div className="login-input-field">
+        <i className="fas fa-envelope" />
+        <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
+      </div>
+      <div className="login-input-field">
+        <i className="fas fa-lock" />
+        <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
+      </div>
+      <div className="login-input-field">
+        <i className="fas fa-wallet" />
+        <input type="number" name="budget" placeholder="Budget" value={formData.budget} onChange={handleChange} required />
+      </div>
+      <div className="login-input-field">
+        <i className="fas fa-chart-line" />
+        <select name="risk" style={{backgroundColor:'whitesmoke', borderRadius:"20px", color:"#cacaca"}} value={formData.risk} onChange={handleChange} required>
+          <option value="" disabled hidden>Select risk level</option>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+        </select>
+      </div>
+      <div className="login-input-field">
+        <i className="fas fa-globe" />
+        <input type="text" name="country" placeholder="Country" value={formData.country} onChange={handleChange} required />
+      </div>
+      <div className="login-input-field">
+        <i className="fas fa-hourglass" />
+        <input type="number" name="holdtime" placeholder="Holdtime (days)" value={formData.holdtime} onChange={handleChange} required />
+      </div>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <input type="submit" value="Sign up" className="login-btn" />
+    </form>
+  );
+};
 
 const LoginSocialIcons = () => (
   <div className="login-social-media">
