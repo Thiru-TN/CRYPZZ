@@ -41,7 +41,6 @@ export const login = async (req,res)=>{
       
             if (iscorrect) {
               gentoken(user._id, res);
-              //console.log(user);
               res.status(200).json({
                 username: user.username,
               });

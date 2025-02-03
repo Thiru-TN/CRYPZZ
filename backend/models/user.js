@@ -35,17 +35,27 @@ const userSchema = new mongoose.Schema({
     },
     posts:{
         type:[mongoose.Schema.Types.ObjectId],
-        ref: "educatedPost"
+        ref: "Posts"
     },
     followers:{
-        type:Number
+        type:Number,
+        default:0
     },
     following:{
         type:[mongoose.Schema.Types.ObjectId],
         ref: "Users"
     },
+    likedPosts:{
+        type:[mongoose.Schema.Types.ObjectId],
+        ref: "Posts"
+    },
+    disLikedPosts:{
+        type:[mongoose.Schema.Types.ObjectId],
+        ref: "Posts"
+    },
     crypzzRatting:{
-        type: Number
+        type: Number,
+        default : 0
     }
 },{timestamps:true})
 
