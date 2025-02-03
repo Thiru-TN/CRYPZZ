@@ -69,10 +69,14 @@ const SignInForm = () => {
       });
 
       console.log("Login Successful", response.data);
+      navigate("/feed");
       // Handle success (e.g., navigate to dashboard, store JWT in localStorage)
     } catch (error) {
-      console.log(error)
-      setError(error.response?.data?.error || "An error occurred");
+      if (error.response && error.response.data.error) {
+        setError(error.response.data.error); // Show backend error
+      } else {
+        setError("An unexpected error occurred.");
+      }
     }
   };
 
@@ -90,7 +94,7 @@ const SignInForm = () => {
         <i className="fas fa-lock" />
         <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
       </div>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p style={{ color: 'white' }}>{error}</p>}
       <input type="submit" value="Login" className="login-btn login-solid" />
     </form>
   );
@@ -124,7 +128,11 @@ const SignUpForm = () => {
       console.log("Signup Successful", response.data);
       // Handle success (e.g., navigate to login, show success message)
     } catch (error) {
-      setError(error.response?.data?.error || "An error occurred");
+      if (error.response && error.response.data.error) {
+        setError(error.response.data.error); 
+      } else {
+        setError("An unexpected error occurred.");
+      }
     }
   };
 
@@ -164,7 +172,7 @@ const SignUpForm = () => {
         <i className="fas fa-hourglass" />
         <input type="number" name="holdtime" placeholder="Holdtime (days)" value={formData.holdtime} onChange={handleChange} required />
       </div>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p style={{ color: 'white' }}>{error}</p>}
       <input type="submit" value="Sign up" className="login-btn" />
     </form>
   );
@@ -206,7 +214,7 @@ function Login() {
             <button 
               className="login-btn login-transparent" 
               style={{ marginRight: "20px" }} 
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/api")}
             >
               Back
             </button>
@@ -233,8 +241,8 @@ function Login() {
             </button>
             <button 
               className="login-btn login-transparent" 
-              style={{ marginLeft: "20px" }} 
-              onClick={() => navigate("/")}
+              style={{ marginRight: "20px" }} 
+              onClick={() => navigate("/api")}
             >
               Back
             </button>

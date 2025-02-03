@@ -5,8 +5,8 @@ import Login from "./pages/login";  // Login Page
 const App = () => {
   return (
     <Routes>
-      <Route path="/" element={<Land />} /> {/* Renders Land page */}
-      <Route path="/login" element={<Login />} /> {/* Renders Login page */}
+      <Route path="/api" element={<Land />} /> {/* Renders Land page */}
+      <Route path="/api/login" element={<Login />} /> {/* Renders Login page */}
     </Routes>
   );
 };

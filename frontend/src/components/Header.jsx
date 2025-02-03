@@ -30,7 +30,7 @@ const Header = () => {
 
   const handleSignIn = () => {
     handleClick();
-    navigate("/login"); // Navigates to Login Page
+    navigate("/api/login"); // Navigates to Login Page
   };
 
   return (
