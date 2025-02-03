@@ -5,7 +5,6 @@ import profileImage from "../assets/notification/image-1.png";
 import { FaBell, FaSyncAlt, FaSearch, FaUser, FaCog, FaEnvelope, FaArrowRight, FaArrowLeft, FaPlus, FaAt, FaComment, FaShareAlt, FaRedoAlt, FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 
 const Feed = () => {
-
   const [newPost, setNewPost] = useState(""); // New post input
   const [posts, setPosts] = useState([
     {
@@ -156,6 +155,7 @@ const Feed = () => {
 
   return (
     <div className="feed">
+
       {/* Top Bar */}
       <div className="top-bar">
         {/* Left Section - Title Logo */}

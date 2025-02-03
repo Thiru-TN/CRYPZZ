@@ -52,7 +52,7 @@ const SignInForm = () => {
     username: '',
     password: ''
   });
-
+  const navigate = useNavigate();
   const [error, setError] = useState(null);
 
   const handleChange = (e) => {
@@ -66,15 +66,17 @@ const SignInForm = () => {
         input: "login",
         username: formData.username,
         password: formData.password
-      });
+        
+      },{ withCredentials: true });
 
       console.log("Login Successful", response.data);
-      navigate("/feed");
+      navigate("/api/feed");
       // Handle success (e.g., navigate to dashboard, store JWT in localStorage)
     } catch (error) {
       if (error.response && error.response.data.error) {
         setError(error.response.data.error); // Show backend error
       } else {
+        console.log(error)
         setError("An unexpected error occurred.");
       }
     }
@@ -123,7 +125,7 @@ const SignUpForm = () => {
       const response = await axios.post('http://localhost:8000/api/auth/login', {
         input: "signup",
         ...formData
-      });
+      },{ withCredentials: true });
 
       console.log("Signup Successful", response.data);
       // Handle success (e.g., navigate to login, show success message)
@@ -131,6 +133,7 @@ const SignUpForm = () => {
       if (error.response && error.response.data.error) {
         setError(error.response.data.error); 
       } else {
+        console.log(error)
         setError("An unexpected error occurred.");
       }
     }
