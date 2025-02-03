@@ -1,12 +1,14 @@
 import { Routes, Route } from "react-router-dom";
-import Land from "./pages/land";  // Landing Page
-import Login from "./pages/login";  // Login Page
+import Feed from "./pages/feed";
+import Land from "./pages/land";
+import Login from "./pages/login";
 
 const App = () => {
   return (
     <Routes>
-      <Route path="/api" element={<Land />} /> {/* Renders Land page */}
-      <Route path="/api/login" element={<Login />} /> {/* Renders Login page */}
+      <Route path="/" element={<Land />} />
+      <Route path="/feed" element={<Feed />} />
+      <Route path="/login" element={<Login />} />
     </Routes>
   );
 };
