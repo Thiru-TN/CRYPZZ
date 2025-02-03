@@ -42,7 +42,7 @@ const userSchema = new mongoose.Schema({
         default:0
     },
     following:{
-        type:[mongoose.Schema.Types.ObjectId],
+        type:[String],
         ref: "Users"
     },
     likedPosts:{

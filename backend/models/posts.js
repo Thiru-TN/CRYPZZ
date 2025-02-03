@@ -10,7 +10,6 @@ const posts = new mongoose.Schema(
     },
     author: {
       type: String,
-      ref: "User",
       required: true,
     },
     likes: {
@@ -29,7 +28,7 @@ const posts = new mongoose.Schema(
     replies: [
       {
         text: { type: String, required: true },
-        author: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+        author: { type: String, required: true },
         timestamp: { type: Date, default: Date.now },
         likes: { type: Number, default: 0 },  
         dislikes: { type: Number, default: 0 },

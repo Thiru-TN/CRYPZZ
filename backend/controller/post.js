@@ -20,6 +20,17 @@ export const getPosts = async (req, res) => {
     }
 };
 
+export const getFollowedUsers = async (req, res) => {
+    try {
+        const followingList = req.user.following;
+        res.status(200).json(followingList);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Server error" });
+    }
+};
+
+
 export const putPosts = async (req, res) => {
     try {
         const { text, postType } = req.body;
@@ -36,7 +47,7 @@ export const putPosts = async (req, res) => {
         // Create new post
         const newPost = new Posts({
             text,
-            author: userId,
+            author: req.user.username,
             postType,
         });
 
@@ -73,9 +84,15 @@ export const follow = async (req, res) => {
         if (!user) {
             return res.status(404).json({ error: "User not found" });
         }
-        if(user.username==tofollow){
-            return res.status(404).json({error:"cant follow yourself"});
+        if (user.username === tofollow) {
+            return res.status(404).json({ error: "Can't follow yourself" });
         }
+
+        // Ensure user.following is always an array
+        if (!Array.isArray(user.following)) {
+            user.following = [];
+        }
+
         if (user.following.includes(toUser._id)) {
             return res.status(400).json({ error: "Already following this user" });
         }
@@ -83,7 +100,7 @@ export const follow = async (req, res) => {
         toUser.followers += 1;
         await toUser.save();
 
-        user.following.push(toUser._id);
+        user.following.push(toUser.username);  // Use _id to avoid potential issues
         await user.save();
 
         res.status(200).json({ message: "Followed successfully", user });
@@ -92,6 +109,7 @@ export const follow = async (req, res) => {
         res.status(500).json({ error: "Server error" });
     }
 };
+
 
 
 export const addLikes = async (req, res) => {
@@ -205,7 +223,7 @@ export const replyToPost = async (req, res) => {
 
         const reply = {
             text,
-            author: userId,
+            author: req.user.username,
             timestamp: new Date(),
             likes: 0, 
             dislikes: 0, 

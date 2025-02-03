@@ -1,73 +1,91 @@
+// still need to add reply and likes counter
+
 import "./css/feed.css";
 import { useEffect, useState } from "react";
+import axios from 'axios';
 import { brainwave } from "../assets";
 import profileImage from "../assets/notification/image-1.png";
 import { FaBell, FaSyncAlt, FaSearch, FaUser, FaCog, FaEnvelope, FaArrowRight, FaArrowLeft, FaPlus, FaAt, FaComment, FaShareAlt, FaRedoAlt, FaThumbsUp, FaThumbsDown } from "react-icons/fa";
-
 const Feed = () => {
   const [newPost, setNewPost] = useState(""); // New post input
-  const [posts, setPosts] = useState([
-    {
-      user: { name: "Elon Musk", profile: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQaEA2WHKMS-636j42g1gvuRSfNqwS1ZUh55w&s" },
-      text: "Exploring new frontiers in space travel. Excited for the upcoming mission!",
-      comments: [{ user: "Jane", text: "Amazing!" }],
-      showComments: false,
-      rating: 3.7,  // Rating out of 10
-      datePosted: "2025-02-04 || 10:30 AM",  // Date and time posted
-    },
-    {
-      user: { name: "Bill Gates", profile: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z'/%3E%3C/svg%3E" },
-      text: "Bitcoin's future looks brighter than ever. Stay tuned for the next big update!",
-      comments: [{ user: "Mark", text: "Great insight!" }],
-      showComments: false,
-      rating: 3.4,
-      datePosted: "2025-02-03 || 8:45 PM",
-    },
-    {
-      user: { name: "Andreas Antonopoulos", profile: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z'/%3E%3C/svg%3E" },
-      text: "Blockchain is not just about money, it's about trust, transparency, and freedom.",
-      comments: [{ user: "Alice", text: "Well said!" }],
-      showComments: false,
-      rating: 7,
-      datePosted: "2025-02-02 || 3:00 PM",
-    },
-    {
-      user: { name: "Sundar Pichai", profile: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z'/%3E%3C/svg%3E" },
-      text: "The decentralized web is the future. Let's make it happen, together!",
-      comments: [],
-      showComments: false,
-      rating: 1.4,
-      datePosted: "2025-02-01 || 1:15 PM",
-    },
-    {
-      user: { name: "Vitalik Buterin", profile: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z'/%3E%3C/svg%3E" },
-      text: "Ethereum is about more than just smart contracts. It's about a decentralized future.",
-      comments: [{ user: "Bob", text: "Exciting vision!" }],
-      showComments: false,
-      rating: 7.8,
-      datePosted: "2025-02-04 || 12:00 PM",
-    },
-]);
+  const [posts, setPosts] = useState([]); // Initialize with an empty array
+  const [followedUsers, setFollowedUsers] = useState([]); // Initialize followed users
 
-  
+  useEffect(() => {
+    // Fetch posts from the API
+    axios.get('http://localhost:8000/api/feed', { withCredentials: true })
+      .then(response => {
+        const fetchedPosts = response.data.map(post => ({
+          user: { name: post.author }, // Assume that the 'author' is the username
+          text: post.text,
+          comments: post.replies.map(reply => ({
+            user: reply.author, 
+            text: reply.text
+          })),
+          likes: post.likes || 0,
+          dislikes: post.dislikes || 0,
+          showComments: false,
+          rating: (post.likes - post.dislikes) / 10,  // Simple rating calculation
+          datePosted: new Date(post.createdAt).toLocaleString(), // Format date
+        }));
+        setPosts(fetchedPosts);
+      })
+      .catch(error => {
+        console.error("Error fetching posts", error);
+      });
+
+    // Fetch followed users for the authenticated user
+    axios.get('http://localhost:8000/api/feed/followedUsers', { withCredentials: true })
+      .then(response => {
+        // Assuming the backend response contains the list of followed users
+        const followedUsersList = response.data; // Update this line based on your backend response
+        setFollowedUsers(followedUsersList);
+      })
+      .catch(error => {
+        console.error("Error fetching followed users", error);
+      });
+
+  }, []);
+
+
   const [commentInput, setCommentInput] = useState(""); // Comment input
 
-  const handleLike = (index) => {
-    // Update the like count or state
-    setPosts(prevPosts => {
-      const updatedPosts = [...prevPosts];
-      updatedPosts[index].likes += 1; // Increment like count
-      return updatedPosts;
-    });
+  const handleLike = async (postid, index) => {
+    try {
+      // Send a POST request to like the post
+      const response = await axios.post('http://localhost:8000/api/feed/liked', { postid: postid }, { withCredentials: true });
+  
+      if (response.status === 200) {
+        // Update the local post data with the new like count
+        const updatedPosts = [...posts];
+        updatedPosts[index].likes = response.data.post.likes;
+        updatedPosts[index].dislikes = response.data.post.dislikes; // Update dislikes too
+        setPosts(updatedPosts);
+      } else {
+        console.error("Failed to like post", response.data);
+      }
+    } catch (error) {
+      console.error("Error liking the post", error);
+    }
   };
   
-  const handleDislike = (index) => {
-    // Update the dislike count or state
-    setPosts(prevPosts => {
-      const updatedPosts = [...prevPosts];
-      updatedPosts[index].dislikes += 1; // Increment dislike count
-      return updatedPosts;
-    });
+  const handleDislike = async (postid, index) => {
+    try {
+      // Send a POST request to dislike the post
+      const response = await axios.post('http://localhost:8000/api/feed/disliked', { postid: postid }, { withCredentials: true });
+      console.log(postid);
+      if (response.status === 200) {
+        // Update the local post data with the new dislike count
+        const updatedPosts = [...posts];
+        updatedPosts[index].likes = response.data.post.likes;
+        updatedPosts[index].dislikes = response.data.post.dislikes; // Update likes too
+        setPosts(updatedPosts);
+      } else {
+        console.error("Failed to dislike post", response.data);
+      }
+    } catch (error) {
+      console.error("Error disliking the post", error);
+    }
   };
   
   const handleShare = (index) => {
@@ -80,17 +98,27 @@ const Feed = () => {
     console.log(`Post ${index} reposted!`);
   };  
 
-  // Handle new post
-  const handlePost = () => {
+  // Handle new pos
+
+  // Function to handle new post creation
+  const handlePost = async () => {
     if (newPost.trim()) {
-      const newPostObject = {
-        user: { name: "User", profile: profileImage }, // Updated profile image path
-        text: newPost,
-        comments: [],
-        showComments: false,
+      const newPostData = {
+        text: newPost,  // Post text from user input
+        postType: "general",  // Adjust according to your use case (could be regular, image, etc.)
       };
-      setPosts([newPostObject, ...posts]); // Add new post to the feed
-      setNewPost(""); // Reset input field
+  
+      try {
+        // Sending a POST request to the backend
+          const response = await axios.post('http://localhost:8000/api/feed', newPostData, { withCredentials: true });
+          if(response.status === 201){
+          setNewPost(""); // Reset input field after posting
+        } else {
+          console.error("Failed to create post", response.data);
+        }
+      } catch (error) {
+        console.error("Error posting the data", error);
+      }
     }
   };
   
@@ -128,13 +156,6 @@ const Feed = () => {
   }, []);
 
   // State for followed users and graph names
-  const [followedUsers] = useState([
-    { name: "Elon Musk", profile: "src/assets/notification/image-2.png" },
-    { name: "Andreas Antonopoulos", profile: "src/assets/notification/image-4.png" },
-    { name: "Vitalik Buterin", profile: "src/assets/notification/image-3.png" },
-    { name: "Satoshi Nakamoto", profile: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z'/%3E%3C/svg%3E" },
-    { name: "Changpeng Zhao", profile: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z'/%3E%3C/svg%3E" },
-  ]);
 
   // Graph name state and logic for switching names
   const [graphNames, setGraphNames] = useState(["Bitcoin", "Etherium", "Solana"]);
@@ -212,42 +233,37 @@ const Feed = () => {
             {posts.map((post, index) => (
               <div key={index} className="post">
                 <div className="post-header">
-                  {followedUsers.length > 0 && (
-                    <img 
-                      src={
-                        followedUsers.find(user => user.name === post.user.name)?.profile 
-                        || followedUsers[4]?.profile 
-                        || "default-profile.png"
-                      } 
-                      alt={post.user.name} 
-                      className="profile-pic" 
-                    />
-                  )}
-                  <span className="username">{post.user.name}</span>
+                {followedUsers.length > 0 && (
+    <img 
+      className="profile-pic" 
+    />
+  )}
+                  <span className="username">{post.user.name}</span>  {/* Display name once */}
                   <span className="post-rating">Rating: {post.rating} / 10</span> {/* Display Rating */}
                   <span className="post-date">{post.datePosted}</span> {/* Display Date/Time */}
                 </div>
                 <p className="post-text">{post.text}</p>
                 <div className="post-footer">
                 <div className="line-fix">
-                  <button onClick={() => toggleComments(index)} className="toggle-comments-button">
-                    <FaComment className="comment-icon" />
-                  </button>
-                  <button onClick={() => handleShare(index)} className="share-button">
-                    <FaShareAlt className="attach-icon" /> {/* Share icon */}
-                  </button>
-                  <button onClick={() => handleRepost(index)} className="repost-button">
-                    <FaRedoAlt className="attach-icon" /> {/* Repost icon */}
-                  </button>
-                  <button className="post-button-fix" onClick={() => handleLike(index)}>
-                    Like
-                    <FaThumbsUp className="attach-icon-fix" /> {/* Like icon */}
-                  </button>
-                  <button className="post-button-fix" onClick={() => handleDislike(index)}>
-                    Dislike
-                    <FaThumbsDown className="attach-icon-fix" /> {/* Dislike icon */}
-                  </button>
-                </div>
+  <button onClick={() => toggleComments(index)} className="toggle-comments-button">
+    <FaComment className="comment-icon" />
+  </button>
+  <button onClick={() => handleShare(index)} className="share-button">
+    <FaShareAlt className="attach-icon" /> {/* Share icon */}
+  </button>
+  <button onClick={() => handleRepost(index)} className="repost-button">
+    <FaRedoAlt className="attach-icon" /> {/* Repost icon */}
+  </button>
+  <button className="post-button-fix" onClick={() => handleLike(post._id, index)}>
+    {post.likes}
+    <FaThumbsUp className="attach-icon-fix" /> {/* Like icon */}
+  </button>
+  <button className="post-button-fix" onClick={() => handleDislike(post._id, index)}>
+    {post.dislikes}
+    <FaThumbsDown className="attach-icon-fix" /> {/* Dislike icon */}
+  </button>
+</div>
+
                   {/* The comments section will initially be visible but can be toggled */}
                   {post.showComments && (
                     <div className="comments-section">
@@ -298,14 +314,15 @@ const Feed = () => {
               <h2 className="section-title">Following</h2>
               <div className="followers-count">
                 <FaUser className="followers-icon" />
-                <span>3</span>
+                <span>{followedUsers.length} followers</span>
               </div>
             </div>
+            
             <div className="followed-list">
               {followedUsers.map((user, index) => (
                 <div key={index} className="followed-user">
-                  <img src={user.profile} alt={user.name} className="user-profile-pic" />
-                  <span className="username">{user.name}</span>
+                  <img className="user-profile-pic" />
+                  <span className="username">{user}</span>
                   <FaEnvelope className="message-icon" />
                 </div>
               ))}
