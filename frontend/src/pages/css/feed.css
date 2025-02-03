@@ -1,0 +1,540 @@
+.feed {
+  width: 100%;
+  min-height: 100vh; /* Ensures it covers the full screen */
+  background-color: #020617;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Prevents multiple scrollbars */
+}
+
+/* Top Bar */
+.feed .top-bar {
+  width: 100%;
+  background-color: #0e0c15;
+  border-bottom: 2px solid #ac6aff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+/* Left Section - Logo */
+.feed .logo img {
+  height: 40px;
+}
+
+/* Icons */
+.feed .icon-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.feed .icon {
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* User Icon with Circle */
+.feed .user-icon-container {
+  width: 50px;
+  height: 50px;
+  background-color: rgba(255, 255, 255, 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feed .user-icon {
+  font-size: 1.0rem;
+}
+
+/* Search Bar */
+.feed .search-bar {
+  position: relative;
+  width: 35%;
+}
+
+.feed .search-input {
+  width: 100%;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 9999px;
+  background-color: #0e0c15;
+  color: white;
+  box-shadow: 0 0 0 1px white;
+}
+
+.feed .search-input:focus {
+  box-shadow: 0 0 0 2px #ac6aff;
+}
+
+.feed .search-icon {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ac6aff;
+  cursor: pointer;
+}
+
+/* Main Content */
+.feed .main-content {
+  display: flex;
+  flex-grow: 1;
+  width: 100%;
+  height: calc(100vh - 60px); /* Full height minus top bar */
+  overflow-y: auto; /* Single scrollbar */
+  margin-top: 60px; /* Adjust for fixed top-bar */
+}
+
+/* Left Section */
+.feed .left-section {
+  width: 60%;
+  padding: 20px;
+  margin-top: 20px;
+  border-right: 2px solid #ac6aff;
+  overflow-y: auto; /* Enable scrolling if content overflows */
+  height: 100vh; /* Full height of the viewport */
+}
+
+/* Right Section */
+.feed .right-section {
+  width: 40%;
+  position: fixed;
+  top: 60px; /* Adjust for top bar height */
+  right: 0;
+  height: calc(100vh - 60px); /* Full height minus top bar */
+  display: flex;
+  flex-direction: column;
+  background-color: #020617;
+  z-index: 999; /* Ensure it's above other content */
+}
+
+/* Live Graph Section */
+.feed .live-section {
+  flex: 0 0 60%;
+  padding: 32px;
+  border-bottom: 2px solid #ac6aff;
+}
+
+.feed .section-title {
+  color: white;
+  margin-top: 10px;
+}
+
+.feed .graph-placeholder {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(270deg, #222, #333);
+  background-size: 400% 400%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ac6aff;
+}
+
+@keyframes shimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Followed Section */
+.feed .followed-section {
+  flex: 0 0 40%;
+  padding: 32px;
+  overflow: auto;
+}
+
+.feed .followed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.feed .followers-count {
+  display: flex;
+  align-items: center;
+  color: white;
+  gap: 8px;
+}
+
+.feed .followers-icon {
+  color: #ac6aff;
+  font-size: 1.25rem;
+}
+
+/* Followed List */
+.feed .followed-list {
+  margin-top: 10px;
+}
+
+.feed .followed-user {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #1a1a2e;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.feed .user-profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.feed .username {
+  flex-grow: 1;
+  color: white;
+  margin-left: 10px;
+}
+
+.feed .message-icon {
+  color: #ac6aff;
+  cursor: pointer;
+}
+
+.feed .followed-user:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0px 0px 15px #ac6aff;
+  transition: 0.3s ease-in-out;
+}
+
+/* User Dropdown */
+.feed .user-dropdown {
+  position: absolute;
+  top: 60px;
+  right: 16px;
+  background: #1a1a2e;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.1);
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.feed .user-dropdown button {
+  background: none;
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.feed .user-dropdown button:hover {
+  background: #ac6aff;
+}
+
+.feed .icon:hover {
+  color: #ac6aff;
+  transform: scale(1.1);
+  transition: 0.3s ease-in-out;
+}
+
+/* Graph Name Section */
+.feed .graph-name-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.feed .graph-name {
+  color: white;
+  font-size: 2.0rem;
+  margin: 0 20px;
+}
+
+.feed .icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #ac6aff;
+  font-size: 1.5rem;
+}
+
+.feed .nav-icon {
+  transition: transform 0.3s ease-in-out;
+}
+
+.feed .icon-button:hover .nav-icon {
+  transform: scale(1.2);
+}
+
+.feed .icon-button:focus {
+  outline: none;
+}
+
+/* Post Section */
+.feed .post-section {
+  display: column;
+  margin-top: 20px;
+  background-color: #1a1a2e;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.line {
+  display: flex;
+  align-items: center;
+  gap: 20px;  /* Align items vertically in the center */
+}
+
+.line-fix {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;  /* Align items vertically in the center */
+}
+
+.attach-icon {
+  margin-right: 10px;  /* Optional, add spacing between icons */
+}
+
+.attach-icon-fix {
+  margin-right: 10px;  /* Optional, add spacing between icons */
+}
+
+.post-button {
+  display: flex;
+  align-items: center;
+  margin-left: 600px;  /* Optional, add spacing before the button */
+}
+
+.post-button-fix {
+  display: flex;
+  align-items: center;  /* Optional, add spacing before the button */
+}
+
+.feed .post-section:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0px 0px 15px #ac6aff;
+  transition: 0.3s ease-in-out;
+}
+
+.feed .post:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0px 0px 15px #ac6aff;
+  transition: 0.3s ease-in-out;
+}
+
+.feed .post-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.feed .profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  color: #ffffff;
+}
+
+.feed .post-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ac6aff;
+  border-radius: 16px;
+  background-color: transparent;
+  color: white;
+  margin-top: 8px;
+}
+
+.feed .post-input::placeholder {
+  color: #ac6aff;
+}
+
+.feed .post-media {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.feed .attach-icon {
+  color: #ac6aff;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.feed .attach-icon-fix {
+  color: #ac6aff;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.feed .comment-icon {
+  color: #ac6aff;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.feed .post-button {
+  margin-top: 16px;
+  padding: 10px 20px;
+  background-color: #ac6aff;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+}
+
+.feed .post-button:hover {
+  background-color: #9c5bd9;
+}
+
+.feed .post-button-fix {
+  margin-top: 16px;
+  padding: 10px 20px;
+  background-color: #ad6aff00;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+}
+
+.feed .post-button-fix:hover {
+  background-color: #9c5bd9;
+}
+
+/* Feed Section */
+.feed .feed-section {
+  margin-top: 20px;
+}
+
+.feed .post {
+  background-color: #1a1a2e;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.feed .post-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.feed .username {
+  color: white;
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+.feed .post-text {
+  color: white;
+  margin-bottom: 12px;
+}
+
+.feed .post-media {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Comments Section */
+.feed .comments-section {
+  margin-top: 10px;
+  background-color: #020617;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.feed .comment {
+  color: white;
+  margin-bottom: 6px;
+}
+
+.feed .comment-user {
+  font-weight: bold;
+}
+
+/* Comment Input */
+.feed .comment-input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 12px;
+  border: 1px solid #ac6aff;
+  border-radius: 8px;
+  background-color: transparent;
+  color: white;
+}
+
+/* Post Button */
+.feed .post-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background-color: #ac6aff;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+}
+
+.feed .post-button-fix {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background-color: #ad6aff00;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+}
+
+.feed .post-button:hover {
+  background-color: #020617;
+}
+
+.feed .post-button-fix:hover {
+  background-color: #020617;
+  color: white;
+}
+
+.feed-graph-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 225px;
+  overflow: hidden;
+}
+
+.feed-graph-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.feed-graph-placeholder:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0px 0px 15px #ac6aff;
+  transition: 0.3s ease-in-out;
+}
+
+.post-rating {
+  margin-left: 10px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.post-date {
+  margin-left: 10px;
+  font-size: 0.8rem;
+  color: #aaa;
+}
