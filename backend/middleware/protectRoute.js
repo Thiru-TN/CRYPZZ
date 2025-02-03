@@ -9,7 +9,7 @@ const protectRoute = async (req, res, next) => {
             return res.status(401).json({ error: "Not logged in", redirect: "/api/login" });
         }
 
-        const decode = jwt.verify(token, process.env.JWT_SECRECT);
+        const decode = jwt.verify(token, process.env.JWT_SECRET);
 
         if (!decode) {
             return res.status(401).json({ error: "Not logged in", redirect: "/api/login" });

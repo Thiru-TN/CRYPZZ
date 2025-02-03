@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const educatedPost = new mongoose.Schema({
+const posts = new mongoose.Schema({
     text:{
         type:String,
         required:true
@@ -18,9 +18,9 @@ const educatedPost = new mongoose.Schema({
         type:Number,
         default: 0
     },
-    coin:{
+    postType:{
         type:String,
-        required:true
+        required: true
     },
     replies: [{
         text: { type: String, required: true },
@@ -29,6 +29,6 @@ const educatedPost = new mongoose.Schema({
     }]
 },{timestamps:true})
 
-const Prediction = mongoose.model("Prediction",educatedPost);
+const Posts = mongoose.model("Posts",posts);
 
-export default Prediction;
+export default Posts;

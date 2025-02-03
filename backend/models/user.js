@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+const typeOfRisks = ["high","low","medium"];
 const userSchema = new mongoose.Schema({
     username:{
         type:String,
@@ -22,8 +22,9 @@ const userSchema = new mongoose.Schema({
         required:true
     },
     risk:{
-        type:Number,
-        required:true
+        type:String,
+        required:true,
+        enum:typeOfRisks
     },
     holdtime:{
         type:Number, //days
@@ -35,6 +36,16 @@ const userSchema = new mongoose.Schema({
     posts:{
         type:[mongoose.Schema.Types.ObjectId],
         ref: "educatedPost"
+    },
+    followers:{
+        type:Number
+    },
+    following:{
+        type:[mongoose.Schema.Types.ObjectId],
+        ref: "Users"
+    },
+    crypzzRatting:{
+        type: Number
     }
 },{timestamps:true})
 
