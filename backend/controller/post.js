@@ -210,3 +210,61 @@ export const replyToPost = async (req, res) => {
         res.status(500).json({ error: "Server error" });
     }
 };
+
+export const addReplyDislikes = async (req, res) => {
+    try {
+        const userId = req.user?._id;
+        if (!userId) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+
+        const { postid, replyIndex } = req.body;
+        
+        // Fetch the post
+        const post = await Posts.findById(postid);
+        if (!post) {
+            return res.status(404).json({ error: "Post not found" });
+        }
+
+        if (!post.replies || post.replies.length <= replyIndex) {
+            return res.status(400).json({ error: "Invalid reply index" });
+        }
+
+        post.replies[replyIndex].dislikes += 1;
+
+        await post.save();
+
+        res.status(200).json({ message: "Reply disliked successfully"});
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Server error" });
+    }
+};
+
+export const addReplyLikes = async (req, res) => {
+    try {
+        const userId = req.user?._id;
+        if (!userId) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+
+        const { postid, replyIndex } = req.body;
+        
+        // Fetch the post
+        const post = await Posts.findById(postid);
+        if (!post) {
+            return res.status(404).json({ error: "Post not found" });
+        }
+
+        post.replies[replyIndex].likes += 1;
+
+        await post.save();
+
+        res.status(200).json({ message: "Reply liked successfully"});
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Server error" });
+    }
+};
