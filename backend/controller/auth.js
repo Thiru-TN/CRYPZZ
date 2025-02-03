@@ -44,6 +44,7 @@ export const login = async (req,res)=>{
               res.status(200).json({
                 username: user.username,
               });
+              
             } else {
               res.status(400).json({ error: "Invalid password" });
             }

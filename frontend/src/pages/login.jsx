@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import axios from 'axios';
 import PropTypes from 'prop-types';
 import './css/login.css';
 import logSvg from '/src/assets/log.svg';
@@ -46,25 +47,54 @@ LoginCard.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-const SignInForm = () => (
-  <form className="login-sign-in-form">
-    <h2 className="login-title">Sign in</h2>
-    <div className="login-card-image">
-      <i className="fas fa-user-circle login-card-icon" style={{ textAlign: 'center', fontSize: "200px", color: "white" }} />
-    </div>
-    <div className="login-input-field">
-      <i className="fas fa-user" />
-      <input type="text" placeholder="Username" />
-    </div>
-    <div className="login-input-field">
-      <i className="fas fa-lock" />
-      <input type="password" placeholder="Password" />
-    </div>
-    <input type="submit" value="Login" className="login-btn login-solid" />
-    <p className="login-social-text">Or Sign in with social platforms</p>
-    <LoginSocialIcons />
-  </form>
-);
+const SignInForm = () => {
+  const [formData, setFormData] = useState({
+    username: '',
+    password: ''
+  });
+
+  const [error, setError] = useState(null);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post('http://localhost:8000/api/auth/login', {
+        input: "login",
+        username: formData.username,
+        password: formData.password
+      });
+
+      console.log("Login Successful", response.data);
+      // Handle success (e.g., navigate to dashboard, store JWT in localStorage)
+    } catch (error) {
+      console.log(error)
+      setError(error.response?.data?.error || "An error occurred");
+    }
+  };
+
+  return (
+    <form className="login-sign-in-form" onSubmit={handleSubmit}>
+      <h2 className="login-title">Sign in</h2>
+      <div className="login-card-image">
+        <i className="fas fa-user-circle login-card-icon" style={{ textAlign: 'center', fontSize: "200px", color: "white" }} />
+      </div>
+      <div className="login-input-field">
+        <i className="fas fa-user" />
+        <input type="text" name="username" placeholder="Username" value={formData.username} onChange={handleChange} required />
+      </div>
+      <div className="login-input-field">
+        <i className="fas fa-lock" />
+        <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
+      </div>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <input type="submit" value="Login" className="login-btn login-solid" />
+    </form>
+  );
+};
 
 const SignUpForm = () => (
   <form className="login-sign-up-form">
