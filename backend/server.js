@@ -22,7 +22,7 @@ const PORT = process.env.PORT
 //routes
 app.use("/api/auth",auth);
 app.use("/api/feed",protectRoute,feed);
-app.use("/api/profile",protectRoute,profile);
+app.use("/api/profile",profile);
 
 app.listen(PORT,()=>{
     console.log(`server is running at ${PORT}`);

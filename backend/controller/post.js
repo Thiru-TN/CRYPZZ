@@ -70,47 +70,6 @@ export const putPosts = async (req, res) => {
     }
 };
 
-export const follow = async (req, res) => {
-    try {
-        const { tofollow } = req.body;
-        const userId = req.user?._id;
-
-        const toUser = await User.findOne({ username: tofollow });
-        if (!toUser) {
-            return res.status(404).json({ error: "User not found" });
-        }
-
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ error: "User not found" });
-        }
-        if (user.username === tofollow) {
-            return res.status(404).json({ error: "Can't follow yourself" });
-        }
-
-        // Ensure user.following is always an array
-        if (!Array.isArray(user.following)) {
-            user.following = [];
-        }
-
-        if (user.following.includes(toUser._id)) {
-            return res.status(400).json({ error: "Already following this user" });
-        }
-
-        toUser.followers += 1;
-        await toUser.save();
-
-        user.following.push(toUser.username);  // Use _id to avoid potential issues
-        await user.save();
-
-        res.status(200).json({ message: "Followed successfully", user });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Server error" });
-    }
-};
-
-
 
 export const addLikes = async (req, res) => {
     try {

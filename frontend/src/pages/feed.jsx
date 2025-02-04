@@ -3,8 +3,9 @@
 import "./css/feed.css";
 import { useEffect, useState } from "react";
 import axios from 'axios';
+import { useNavigate} from "react-router-dom";
 import { brainwave } from "../assets";
-import { FaBell, FaSyncAlt, FaSearch, FaUser, FaCog, FaEnvelope, FaArrowRight, FaArrowLeft, FaPlus, FaAt, FaComment, FaShareAlt, FaRedoAlt, FaThumbsUp, FaThumbsDown } from "react-icons/fa";
+import { FaBell, FaSyncAlt, FaHome, FaSearch, FaUser, FaCog, FaEnvelope, FaArrowRight, FaArrowLeft, FaPlus, FaAt, FaComment, FaShareAlt, FaRedoAlt, FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 const Feed = () => {
   const [newPost, setNewPost] = useState(""); // New post input
   const [posts, setPosts] = useState([]); // Initialize with an empty array
@@ -47,7 +48,8 @@ const Feed = () => {
 
   }, []);
 
-
+  
+  const [isPosted, setIsPosted] = useState(false);
   const [commentInput, setCommentInput] = useState(""); // Comment input
 
   const handleLike = async (postid, index) => {
@@ -102,20 +104,6 @@ const Feed = () => {
       console.error("Error liking the post", error);
     }
   };
-  
-  
-  const handleShare = (index) => {
-    // Logic for sharing post
-    console.log(`Post ${index} shared!`);
-  };
-  
-  const handleRepost = (index) => {
-    // Logic for reposting
-    console.log(`Post ${index} reposted!`);
-  };  
-
-  // Handle new pos
-
   // Function to handle new post creation
   const handlePost = async () => {
     if (newPost.trim()) {
@@ -128,7 +116,13 @@ const Feed = () => {
         // Sending a POST request to the backend
           const response = await axios.post('http://localhost:8000/api/feed', newPostData, { withCredentials: true });
           if(response.status === 201){
-          setNewPost(""); // Reset input field after posting
+          setNewPost(""); 
+          setIsPosted(true); // Show the "Posted" message
+
+      // Hide the "Posted" message after 2 seconds
+      setTimeout(() => {
+        setIsPosted(false);
+      }, 2000);// Reset input field after posting
         } else {
           console.error("Failed to create post", response.data);
         }
@@ -137,6 +131,12 @@ const Feed = () => {
       }
     }
   };
+
+    const navigate = useNavigate();
+            
+        const handlenav = () => {
+            navigate("/api/home");
+        };
   
 
   // Toggle comments section visibility
@@ -191,14 +191,16 @@ const Feed = () => {
     };
   }, []);
 
+  
+
   // State for followed users and graph names
 
   // Graph name state and logic for switching names
-  const [graphNames, setGraphNames] = useState(["Bitcoin", "Etherium", "Solana"]);
-  const graphImages = [
-    "https://assets.hongkiat.com/uploads/websites-track-bitcoin-value/BitcoinWisdom.jpg?2",
-    "https://images.ctfassets.net/h62aj7eo1csj/3tUMblWWXbT6ucoVvfmclM/cd94c37a8febbb2fd43e2f366fcb233e/Filers-AppStatus-ETH-ETFs_1792w.jpg?w=1100&q=60&fm=jpg",
-    "https://miro.medium.com/v2/resize:fit:1400/1*1QQVqedE2_8N71qHb-X9Yw.png"
+  const [graphNames, setGraphNames] = useState(["Bitcoin", "Etherium", "Cardano"]);
+  const graphLinks = [
+    "https://ssltvc.investing.com/?pair_ID=7&height=480&width=550&interval=1800&plotStyle=bars&domain_ID=56&lang_ID=56&timezone_ID=20",  // Bitcoin Example
+    "https://ssltvc.investing.com/?pair_ID=1057391&height=480&width=550&interval=1800&plotStyle=bars&domain_ID=56&lang_ID=56&timezone_ID=20", // Ethereum Example
+    "https://ssltvc.investing.com/?pair_ID=1061443&height=480&width=550&interval=1800&plotStyle=bars&domain_ID=56&lang_ID=56&timezone_ID=20"  // Cardano Example
   ];
   const [currentNameIndex, setCurrentNameIndex] = useState(0);
 
@@ -219,7 +221,7 @@ const Feed = () => {
         <div className="logo">
           <img src={brainwave} alt="Brainwave Logo" className="h-10" />
         </div>
-
+        <FaHome className="icon cursor-pointer mx-4" onClick={handlenav} />
         {/* Search Bar */}
         <div className="search-bar">
           <input type="text" placeholder="Search..." className="search-input" />
@@ -241,7 +243,10 @@ const Feed = () => {
       <div className="main-content">
         {/* Left Section */}
         <div className="left-section">
-          <h2 style={{fontSize:"3rem", padding: "25px", marginLeft: "350px"}} className="left-title">Feed</h2> {/* Changed title to Feed */}
+        <h2 style={{ fontSize: '3rem', padding: '25px', marginLeft: '350px' }} className="left-title">
+            Feed
+            {isPosted && <span style={{ marginLeft: '20px', color: 'green', fontSize: '1.5rem' }}>Posted</span>} {/* Display Posted message */}
+        </h2>
           {/* Post Input Section */}
           <div className="post-section">
             <div className="post-header">
@@ -292,11 +297,11 @@ const Feed = () => {
   </button>
   <button className="post-button-fix" onClick={() => handleLike(post._id, index)}>
     {post.likes}
-    <FaThumbsUp className="attach-icon-fix" /> {/* Like icon */}
+    <FaThumbsUp style={{marginLeft:'10px'}} className="attach-icon-fix" /> {/* Like icon */}
   </button>
   <button className="post-button-fix" onClick={() => handleDislike(post._id, index)}>
     {post.dislikes}
-    <FaThumbsDown className="attach-icon-fix" /> {/* Dislike icon */}
+    <FaThumbsDown style={{marginLeft:'10px'}} className="attach-icon-fix" /> {/* Dislike icon */}
   </button>
 </div>
 
@@ -330,7 +335,14 @@ const Feed = () => {
           <div className="live-section">
             <h2 className="section-title">Live</h2>
             <div className="feed-graph-placeholder">
-              <img src={graphImages[currentNameIndex]} alt={graphNames[currentNameIndex]} className="graph-image" />
+                <iframe
+                    src={graphLinks[currentNameIndex]}
+                    className="graph-iframe"
+                    title={graphNames[currentNameIndex]}
+                    frameBorder="0"
+                    width="100%"
+                    height="500px"
+                ></iframe>
             </div>
             {/* Graph Name Section */}
             <div className="graph-name-section">
