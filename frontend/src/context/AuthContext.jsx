@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const AuthContext = createContext();
 
@@ -8,31 +8,40 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    // Check authentication status on initial load
+    // List of public routes that don't require authentication
+    const publicRoutes = ['/api/login','/api/profile','/api/home', '/', '/api'];
+
+    // Check if the current route is a public route
+    if (publicRoutes.includes(location.pathname)) {
+      setIsLoading(false);
+      return;
+    }
+
+    // Check authentication status on route change
     const checkAuthStatus = async () => {
       try {
         const response = await axios.get('http://localhost:8000/api/auth/verify', { 
           withCredentials: true 
         });
         
-        if (response.data.isAuthenticated) {
-          setIsAuthenticated(true);
-        } else {
-          setIsAuthenticated(false);
-          navigate('/api/login');
-        }
+        setIsAuthenticated(response.data.isAuthenticated);
         setIsLoading(false);
       } catch (error) {
         setIsAuthenticated(false);
         setIsLoading(false);
-        navigate('/api/login');
+        
+        // Only redirect to login if not on a public route
+        if (!publicRoutes.includes(location.pathname)) {
+          navigate('/api/login');
+        }
       }
     };
 
     checkAuthStatus();
-  }, [navigate]);
+  }, [location.pathname, navigate]);
 
   const login = (userData) => {
     setIsAuthenticated(true);

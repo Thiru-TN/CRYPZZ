@@ -1,12 +1,17 @@
 import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const PrivateRoute = () => {
   const { isAuthenticated, isLoading } = useAuth();
+  const location = useLocation();
+
+  // Exclude login page from protection
+  if (location.pathname === '/api/login') {
+    return <Outlet />;
+  }
 
   if (isLoading) {
-    // Optionally, you can add a loading spinner here
     return <div>Loading...</div>;
   }
 
