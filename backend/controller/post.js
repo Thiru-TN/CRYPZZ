@@ -5,7 +5,7 @@ export const getPosts = async (req, res) => {
     try {
         const followingList = req.user.following;
         let resResult;
-        if (followingList?.length<3) {
+        if (followingList?.length==0) {
             resResult = await Posts.find().sort({ likes: -1 }).limit(5).lean();
         }
         else{

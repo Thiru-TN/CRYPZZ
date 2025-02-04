@@ -15,6 +15,7 @@ const Profile = () => {
     posts: 0,
     followers: 0,
     following: 0,
+    crypzzRatting: 0
   });
 
   // State for posts
@@ -31,7 +32,8 @@ const Profile = () => {
         
         if (!response.ok) throw new Error("Failed to fetch stats");
 
-        const data = await response.json();  // Read response only ONCE
+        const data = await response.json();
+        console.log(data)
         console.log("API Response:", data);
 
         setUserStats(data);
@@ -119,6 +121,8 @@ const Profile = () => {
                   >
                     {isFollowed ? "Following" : "Follow"}
                   </button>
+                  <span className="stat-label">Rating</span>
+                  <span className="stat-value">{userStats.rating}</span>
                 </div>
               </div>
 

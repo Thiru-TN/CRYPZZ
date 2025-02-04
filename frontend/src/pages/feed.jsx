@@ -275,12 +275,14 @@ const Feed = () => {
               <div key={index} className="post">
                 <div className="post-header">
                 {followedUsers.length > 0 && (
-    <img 
-      className="profile-pic" 
-    />
+    <FaUser className="followers-icon" />
   )}
-                  <span className="username">{post.user.name}</span>  {/* Display name once */}
-                  <span className="post-rating">Rating: {post.rating} / 10</span> {/* Display Rating */}
+                  <span className="username">
+  <a href={`http://localhost:5173/api/profile/${post.user.name}`} rel="noopener noreferrer">
+    {post.user.name}
+  </a>
+</span>
+                  
                   <span className="post-date">{post.datePosted}</span> {/* Display Date/Time */}
                 </div>
                 <p className="post-text">{post.text}</p>
@@ -369,8 +371,12 @@ const Feed = () => {
             <div className="followed-list">
               {followedUsers.map((user, index) => (
                 <div key={index} className="followed-user">
-                  <img className="user-profile-pic" />
-                  <span className="username">{user}</span>
+                  <FaUser className="followers-icon" />
+                  <span className="username"><span className="username">
+  <a href={`http://localhost:5173/api/profile/${user}`} rel="noopener noreferrer">
+    {user}
+  </a>
+</span></span>
                   <FaEnvelope className="message-icon" />
                 </div>
               ))}

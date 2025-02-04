@@ -35,7 +35,8 @@ export const getStats = async (req, res) => {
             username: user.username,
             followers: user.followers,
             following: user.following.length,
-            posts: user.posts.length
+            posts: user.posts.length,
+            rating:user.crypzzRatting
         };
         res.status(200).json(response);
     } catch (error) {
