@@ -4,7 +4,6 @@ import "./css/feed.css";
 import { useEffect, useState } from "react";
 import axios from 'axios';
 import { brainwave } from "../assets";
-import profileImage from "../assets/notification/image-1.png";
 import { FaBell, FaSyncAlt, FaSearch, FaUser, FaCog, FaEnvelope, FaArrowRight, FaArrowLeft, FaPlus, FaAt, FaComment, FaShareAlt, FaRedoAlt, FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 const Feed = () => {
   const [newPost, setNewPost] = useState(""); // New post input
@@ -16,7 +15,8 @@ const Feed = () => {
     axios.get('http://localhost:8000/api/feed', { withCredentials: true })
       .then(response => {
         const fetchedPosts = response.data.map(post => ({
-          user: { name: post.author }, // Assume that the 'author' is the username
+          _id:post._id,
+          user: { name: post.author || "Unknown" }, 
           text: post.text,
           comments: post.replies.map(reply => ({
             user: reply.author, 
@@ -53,40 +53,58 @@ const Feed = () => {
   const handleLike = async (postid, index) => {
     try {
       // Send a POST request to like the post
-      const response = await axios.post('http://localhost:8000/api/feed/liked', { postid: postid }, { withCredentials: true });
+      const response = await axios.post('http://localhost:8000/api/feed/liked', { postid }, { withCredentials: true });
   
-      if (response.status === 200) {
-        // Update the local post data with the new like count
-        const updatedPosts = [...posts];
-        updatedPosts[index].likes = response.data.post.likes;
-        updatedPosts[index].dislikes = response.data.post.dislikes; // Update dislikes too
-        setPosts(updatedPosts);
+      if (response.status === 200 && response.data) {
+  
+        setPosts(prevPosts => {
+          const updatedPosts = [...prevPosts];
+          
+          // Update the post at the given index with the new data
+          updatedPosts[index] = {
+            ...updatedPosts[index],  // Keep other properties
+            likes: response.data.likes, 
+            dislikes: response.data.dislikes
+          };
+  
+          return updatedPosts;
+        });
       } else {
-        console.error("Failed to like post", response.data);
+        console.error("Unexpected response format:", response.data);
       }
     } catch (error) {
       console.error("Error liking the post", error);
     }
   };
   
+  
   const handleDislike = async (postid, index) => {
     try {
-      // Send a POST request to dislike the post
-      const response = await axios.post('http://localhost:8000/api/feed/disliked', { postid: postid }, { withCredentials: true });
-      console.log(postid);
-      if (response.status === 200) {
-        // Update the local post data with the new dislike count
-        const updatedPosts = [...posts];
-        updatedPosts[index].likes = response.data.post.likes;
-        updatedPosts[index].dislikes = response.data.post.dislikes; // Update likes too
-        setPosts(updatedPosts);
+      // Send a POST request to like the post
+      const response = await axios.post('http://localhost:8000/api/feed/disliked', { postid }, { withCredentials: true });
+  
+      if (response.status === 200 && response.data) {
+  
+        setPosts(prevPosts => {
+          const updatedPosts = [...prevPosts];
+          
+          // Update the post at the given index with the new data
+          updatedPosts[index] = {
+            ...updatedPosts[index],  // Keep other properties
+            likes: response.data.likes, 
+            dislikes: response.data.dislikes
+          };
+  
+          return updatedPosts;
+        });
       } else {
-        console.error("Failed to dislike post", response.data);
+        console.error("Unexpected response format:", response.data);
       }
     } catch (error) {
-      console.error("Error disliking the post", error);
+      console.error("Error liking the post", error);
     }
   };
+  
   
   const handleShare = (index) => {
     // Logic for sharing post

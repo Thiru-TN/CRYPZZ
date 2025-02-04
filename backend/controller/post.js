@@ -129,37 +129,28 @@ export const addLikes = async (req, res) => {
         if (!post) {
             return res.status(404).json({ error: "Post not found" });
         }
-        if(user.disLikedPosts.includes(postid)){
-            post.dislies-=1;
-            await post.save();
+
+        if (user.disLikedPosts.includes(postid)) {
+            post.dislikes -= 1;
             user.disLikedPosts = user.disLikedPosts.filter(post => !post.equals(postid));
-            await user.save();
         }
+
         if (user.likedPosts.includes(postid)) {
             post.likes -= 1;
-            await post.save();
-
             user.likedPosts = user.likedPosts.filter(post => !post.equals(postid));
-            await user.save();
-
-            return res.status(200).json({ message: "Post unliked successfully", post });
         } else {
             post.likes += 1;
-            await post.save();
-
             user.likedPosts.push(postid);
-            await user.save();
-
-            return res.status(200).json({ message: "Post liked successfully", post });
         }
 
+        await post.save();
+        await user.save();
+        return res.status(200).json(post); 
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Server error" });
     }
 };
-
-
 export const addDislikes = async (req, res) => {
     try {
         const userId = req.user?._id;
@@ -177,35 +168,30 @@ export const addDislikes = async (req, res) => {
         if (!post) {
             return res.status(404).json({ error: "Post not found" });
         }
-        if(user.likedPosts.includes(postid)){
-            post.likes-=1;
-            await post.save();
+
+        if (user.likedPosts.includes(postid)) {
+            post.likes -= 1;
             user.likedPosts = user.likedPosts.filter(post => !post.equals(postid));
-            await user.save();
         }
+
         if (user.disLikedPosts.includes(postid)) {
             post.dislikes -= 1;
-            await post.save();
-
             user.disLikedPosts = user.disLikedPosts.filter(post => !post.equals(postid));
-            await user.save();
-
-            return res.status(200).json({ message: "Post un-disliked successfully", post });
         } else {
             post.dislikes += 1;
-            await post.save();
-
             user.disLikedPosts.push(postid);
-            await user.save();
-
-            return res.status(200).json({ message: "Post disliked successfully", post });
         }
 
+        await post.save();
+        await user.save();
+
+        return res.status(200).json(post);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Server error" });
     }
 };
+
 
 export const replyToPost = async (req, res) => {
     try {
