@@ -1,4 +1,4 @@
-import express, { json } from "express";
+import express from "express";
 import dotnev from "dotenv";
 import connect from "./database/dbConfig.js";
 import auth from "./routes/login.js";
@@ -6,6 +6,7 @@ import feed from "./routes/post.js";
 import cookieParser from "cookie-parser";
 import protectRoute from "./middleware/protectRoute.js";
 import cors from "cors";
+import profile from "./routes/profile.js";
 
 //config
 dotnev.config();
@@ -18,8 +19,10 @@ app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 
 const PORT = process.env.PORT
 
-app.use("/api/feed",protectRoute,feed);
+//routes
 app.use("/api/auth",auth);
+app.use("/api/feed",protectRoute,feed);
+app.use("/api/profile",protectRoute,profile);
 
 app.listen(PORT,()=>{
     console.log(`server is running at ${PORT}`);
