@@ -218,7 +218,10 @@ export const replyToPost = async (req, res) => {
         post.replies.push(reply);
         await post.save();
 
-        res.status(200).json({ message: "Reply added successfully", post });
+        res.status(200).json({ 
+            message: "Reply added successfully", 
+            reply
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Server error" });

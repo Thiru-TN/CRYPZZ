@@ -52,7 +52,6 @@ const Feed = () => {
 
   const handleLike = async (postid, index) => {
     try {
-      // Send a POST request to like the post
       const response = await axios.post('http://localhost:8000/api/feed/liked', { postid }, { withCredentials: true });
   
       if (response.status === 200 && response.data) {
@@ -60,9 +59,8 @@ const Feed = () => {
         setPosts(prevPosts => {
           const updatedPosts = [...prevPosts];
           
-          // Update the post at the given index with the new data
           updatedPosts[index] = {
-            ...updatedPosts[index],  // Keep other properties
+            ...updatedPosts[index], 
             likes: response.data.likes, 
             dislikes: response.data.dislikes
           };
@@ -122,8 +120,8 @@ const Feed = () => {
   const handlePost = async () => {
     if (newPost.trim()) {
       const newPostData = {
-        text: newPost,  // Post text from user input
-        postType: "general",  // Adjust according to your use case (could be regular, image, etc.)
+        text: newPost, 
+        postType: "general",
       };
   
       try {
@@ -148,26 +146,46 @@ const Feed = () => {
     setPosts(updatedPosts);
   };
 
-  // Handle comment submission
-  const handleCommentPost = (e, postIndex) => {
+
+  const handleCommentPost = async (e, postIndex) => {
     if (e.key === "Enter" && commentInput.trim()) {
-      const updatedPosts = [...posts];
-      updatedPosts[postIndex].comments.push({
-        user: "User",
-        text: commentInput,
-      });
-      setPosts(updatedPosts);
-      setCommentInput(""); // Reset comment input
+      try {
+        const response = await axios.post(
+          "http://localhost:8000/api/feed/post/reply",
+          { postid: posts[postIndex]._id, text: commentInput },
+          { withCredentials: true }
+        );
+        if (response.status === 200) {
+          const newReply = response.data.reply;
+  
+          setPosts(prevPosts => {
+            return prevPosts.map((post, index) => {
+              if (index === postIndex) {
+                return {
+                  ...post,
+                  comments: [...post.comments, { user: newReply.author, text: newReply.text }]
+                };
+              }
+              return post;
+            });
+          });
+  
+          setCommentInput("");
+        } else {
+          console.error("Failed to post reply", response.data);
+        }
+      } catch (error) {
+        console.error("Error posting reply", error);
+      }
     }
   };
+  
 
   useEffect(() => {
-    // Disable scrolling on the root when the feed page is active
     document.documentElement.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
 
     return () => {
-      // Re-enable scrolling when leaving the feed page
       document.documentElement.style.overflow = "";
       document.body.style.overflow = "";
     };
@@ -297,7 +315,7 @@ const Feed = () => {
                         className="comment-input"
                         value={commentInput}
                         onChange={(e) => setCommentInput(e.target.value)}
-                        onKeyDown={(e) => handleCommentPost(e, index)} // Add comment on Enter
+                        onKeyDown={(e) => handleCommentPost(e, posts.findIndex(p => p._id === post._id))}
                       />
                     </div>
                   )}
