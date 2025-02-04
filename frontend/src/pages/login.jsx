@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
+import { useAuth } from '../context/AuthContext';
 import PropTypes from 'prop-types';
 import './css/login.css';
 import logSvg from '/src/assets/log.svg';
 import registerSvg from '/src/assets/register.svg';
-import { useNavigate } from "react-router-dom";
 
 const LoginCard = ({ children }) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -53,6 +54,7 @@ const SignInForm = () => {
     password: ''
   });
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [error, setError] = useState(null);
 
   const handleChange = (e) => {
@@ -66,15 +68,14 @@ const SignInForm = () => {
         input: "login",
         username: formData.username,
         password: formData.password
-        
-      },{ withCredentials: true });
+      }, { withCredentials: true });
 
       console.log("Login Successful", response.data);
+      login(response.data);
       navigate("/api/feed");
-      // Handle success (e.g., navigate to dashboard, store JWT in localStorage)
     } catch (error) {
       if (error.response && error.response.data.error) {
-        setError(error.response.data.error); // Show backend error
+        setError(error.response.data.error);
       } else {
         console.log(error)
         setError("An unexpected error occurred.");
@@ -113,6 +114,8 @@ const SignUpForm = () => {
     holdtime: ''
   });
 
+  const navigate = useNavigate();
+  const { login } = useAuth();
   const [error, setError] = useState(null);
 
   const handleChange = (e) => {
@@ -125,10 +128,11 @@ const SignUpForm = () => {
       const response = await axios.post('http://localhost:8000/api/auth/login', {
         input: "signup",
         ...formData
-      },{ withCredentials: true });
+      }, { withCredentials: true });
 
       console.log("Signup Successful", response.data);
-      // Handle success (e.g., navigate to login, show success message)
+      login(response.data);
+      navigate("/api/feed");
     } catch (error) {
       if (error.response && error.response.data.error) {
         setError(error.response.data.error); 
