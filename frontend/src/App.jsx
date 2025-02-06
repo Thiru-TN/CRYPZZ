@@ -3,6 +3,7 @@ import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./components/PrivateRoute";
 import Feed from "./pages/feed";
 import Land from "./pages/land";
+import Roadmap from "./pages/roadmap";
 import Login from "./pages/login";
 import Home from "./pages/home";
 import Profile from "./pages/profile";
@@ -16,6 +17,7 @@ const App = () => {
         <Route path="/api/login" element={<Login />} />
         <Route path="/api/home" element={<Home />} />
         <Route path="/api/nan" element={<NotPage />} />
+        <Route path="/api/roadmap" element={<Roadmap />} />
         {/* Protected Routes */}
         <Route element={<PrivateRoute />}>
           <Route path="/api/feed" element={<Feed />} />
